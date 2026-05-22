@@ -4,7 +4,7 @@
 
 
 #ifdef ENABLE_SHADOWS
-    #include "shadows.glsl"
+    #include "../shadows/shadows.glsl"
 #endif
 
 /* DRAWBUFFERS:0 */

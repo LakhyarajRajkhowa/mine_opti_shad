@@ -1,4 +1,4 @@
-#include "settings.glsl"
+#include "../config/settings.glsl"
 
 
 #ifdef SHADOW_DISTORT_ENABLED

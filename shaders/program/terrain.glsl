@@ -1,5 +1,5 @@
 
-#include "waves.glsl"
+#include "../utils/waves.glsl"
 
 in vec4 mc_Entity;
 
