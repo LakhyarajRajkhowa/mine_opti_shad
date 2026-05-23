@@ -23,7 +23,7 @@ uniform vec3 chunkOffset;
 out vec3 foilageColor;
 out vec3 normal;
 out vec3 worldPos;
-out vec3 worldNormal;
+out vec3 playerPos;
 
 out vec2 texCoord;
 out vec2 lightMapCoords;
@@ -42,8 +42,8 @@ void main(){
 
     pos = calculateFoilageMotion(pos);
 
+    playerPos = pos ;
     worldPos = pos;
-
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 }
