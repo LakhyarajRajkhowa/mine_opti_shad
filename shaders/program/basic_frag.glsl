@@ -1,3 +1,8 @@
+/*
+
+How do I implement volumetric lighting (god rays / crepuscular rays) in a Minecraft GLSL shader? I want sunlight shafts through trees and fog.
+*/
+
 #version 330
 
 #define ENABLE_SHADOWS
@@ -29,9 +34,9 @@ uniform vec3 shadowLightPosition;
 const float _ShadowBias = 0.0002;
 
 
-vec3 calculateShadows(const vec3 lightColor) {
+vec3 calculateShadows(const vec3 lightColor, const vec3 worldNormal, float NdotLmax0) {
 #ifdef ENABLE_SHADOWS
-    vec3 shadow = GetShadows(worldPos, _ShadowBias);
+    vec3 shadow = GetShadows(worldPos, worldNormal, NdotLmax0 );
     shadow = mix(shadow, vec3(0.35) + lightColor * 0.4, rainStrength);
     return shadow;
 #else
@@ -49,7 +54,8 @@ void main() {
 
     // --- LIGHTMAP ---
     vec3  lightColor    = texture(lightmap, lightMapCoords).rgb;
-    float skylightLevel = texture(lightmap, lightMapCoords).g;
+    float skylightLevel = texture(lightmap, lightMapCoords).g;  
+    float blockLevel    = texture(lightmap, lightMapCoords).r;  
 
     // --- VECTORS ---
     vec3 viewDir     = normalize(-worldPos);
@@ -57,10 +63,11 @@ void main() {
     vec3 lightDir    = normalize(mat3(gbufferModelViewInverse) * shadowLightPosition);
 
     // --- SHADOWS ---
-    vec3 shadow = calculateShadows(lightColor);
+    float NdotLmax0 = max(dot(worldNormal, lightDir), 0.5);
+    vec3 shadow = calculateShadows(lightColor, worldNormal, NdotLmax0);
 
     // --- LIGHTING ---
-    vec3 lighting = calculateLighting(worldNormal, viewDir, lightDir, lightColor, skylightLevel, shadow);
+    vec3 lighting = calculateLighting(worldNormal, viewDir, lightDir, lightColor, skylightLevel, shadow * NdotLmax0);
 
     // --- FINAL COLOR ---
     vec4 finalColor = vec4(clamp(albedo.rgb * lighting, 0.0, 1.0), albedo.a);

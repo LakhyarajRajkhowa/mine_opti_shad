@@ -27,6 +27,9 @@ float calculateFresnel(const vec3 viewDir, const vec3 worldNormal) {
     return pow(1.0 - max(dot(worldNormal, viewDir), 0.0), 5.0);
 }
 
+const vec3 blocklightColor = vec3(1.0, 0.6, 0.3);  // warm orange torch tint
+
+
 vec3 calculateLighting(
     const vec3  worldNormal,
     const vec3  viewDir,
@@ -35,9 +38,8 @@ vec3 calculateLighting(
     float       skylightLevel,
     const vec3  shadow
 ) {
-    float nDotL = max(dot(worldNormal, lightDir), 0.0);
 
-    vec3 diffuse  = vec3(nDotL) * shadow;
+    vec3 diffuse  = shadow;
     vec3 direct   = sunlightColor * sunlightIntensity * diffuse;
     vec3 ambient  = calculateAmbient(skylightLevel, worldNormal);
     vec3 specular = calculateSpecular(skylightLevel, viewDir, worldNormal, lightDir);
